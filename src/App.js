@@ -1,26 +1,36 @@
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
-import Login from "./components/Login";
-import Navbar from "./components/Navbar";
-import Register from "./components/Register";
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import Dashboard from './components/Dashboard'
+import Login from './components/Login'
+import Navbar from './components/Navbar'
+import Register from './components/Register'
+import { Update } from './components/Update'
+import { Karyawan } from './components/Karyawan'
 
 function App() {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/">
-          <Login/>
+          <Login />
         </Route>
         <Route path="/register">
-          <Register/>
+          <Register />
         </Route>
         <Route path="/dashboard">
-          <Navbar/>
-          <Dashboard/>
+          <Navbar />
+          <Dashboard />
+        </Route>
+        <Route path="/karyawan/:id">
+          <Navbar />
+          <Update />
+        </Route>
+        <Route path="/karyawan">
+          <Navbar />
+          <Karyawan />
         </Route>
       </Switch>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App
