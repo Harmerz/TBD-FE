@@ -6,8 +6,15 @@ const Navbar = () => {
   const history = useHistory()
 
   const Logout = async () => {
+    localStorage.removeItem('data')
     try {
-      await axios.delete('http://localhost:5000/logout')
+      await axios.post('http://localhost:5000/api/login',
+        {
+          data: JSON.stringify({
+            username: '',
+            password: '',
+          }),
+      })
       history.push('/')
     } catch (error) {
       console.log(error)
@@ -23,12 +30,7 @@ const Navbar = () => {
       <div className="container">
         <div className="navbar-brand">
           <a className="navbar-item" href="https://bulma.io">
-            <img
-              src="https://bulma.io/images/bulma-logo.png"
-              width="112"
-              height="28"
-              alt="logo"
-            />
+            <img src="/haikal-logo.png" width="56" height="100" alt="logo" />
           </a>
 
           <a
@@ -51,6 +53,30 @@ const Navbar = () => {
               Home
             </a>
           </div>
+          {/* <div>
+            <ul>
+              <li>
+                <a href="/tugas-basdat" className="navbar-item">
+                  Staff
+                </a>
+              </li>
+              <li>
+                <a href="/tugas-basdat" className="navbar-item">
+                  Store
+                </a>
+              </li>
+              <li>
+                <a href="/tugas-basdat" className="navbar-item">
+                  Payment
+                </a>
+              </li>
+              <li>
+                <a href="/tugas-basdat" className="navbar-item">
+                  Book
+                </a>
+              </li>
+            </ul> 
+          </div> */}
 
           <div className="navbar-end">
             <div className="navbar-item">

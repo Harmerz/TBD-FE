@@ -1,18 +1,27 @@
 import React from 'react'
-import { Button, Select, Form, Input } from 'antd'
+import { Button, Form, Input } from 'antd'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
-export function Karyawan() {
+export function Store() {
   const formRef = React.useRef(null)
   const history = useHistory()
-  const onFinish = (values) => {
-    axios.post(`http://localhost:5000/karyawan`, {
-      nama: values.nama,
-      age: values.age,
-      no_telp: values.no_telp,
-      alamat: values.alamat,
-      tags: values.tags.toString(),
-    })
+  const onFinish = async (values) => {
+    try {
+      const res = await axios.post(`http://localhost:5000/api/address`, {
+        address: values.address,
+        address2: values.address2,
+        City: values.city,
+        PostalZip: values.postalzip,
+      })
+      await axios.post(`http://localhost:5000/api/store`, {
+        StoreName: values.storename,
+        addressID: res.data.addressID,
+      })
+      // history.push('/dashboard')
+    } catch (error) {
+      console.log(error)
+    }
+
     history.push('/dashboard')
   }
 
@@ -35,38 +44,38 @@ export function Karyawan() {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
-      <Form.Item label="Nama" name="nama" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-
-      <Form.Item label="Age" name="age" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-
       <Form.Item
-        label="Phone Number"
-        name="no_telp"
+        label="Store Name"
+        name="storename"
         rules={[{ required: true }]}
       >
         <Input />
       </Form.Item>
 
-      <Form.Item label="Address" name="alamat" rules={[{ required: true }]}>
+      <Form.Item label="Address" name="address" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
 
-      <Form.Item label="Tags" name="tags" rules={[{ required: true }]}>
-        <Select mode="multiple" allowClear>
-          <Select.Option value="Frontend">Frontend</Select.Option>
-          <Select.Option value="Backend">Backend</Select.Option>
-          <Select.Option value="Database">Database</Select.Option>
-        </Select>
+      <Form.Item label="Address 2" name="address2">
+        <Input />
+      </Form.Item>
+
+      <Form.Item label="City" name="city" rules={[{ required: true }]}>
+        <Input />
+      </Form.Item>
+
+      <Form.Item
+        label="Postal Zip"
+        name="postalzip"
+        rules={[{ required: true }]}
+      >
+        <Input />
       </Form.Item>
 
       <Form.Item
         wrapperCol={{ offset: 8, span: 16 }}
         labelCol={{
-          span: 8,
+          span: 24,
         }}
       >
         <Button type="primary" htmlType="submit">

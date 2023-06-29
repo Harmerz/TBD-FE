@@ -1,96 +1,193 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import axios from 'axios'
-import jwt_decode from 'jwt-decode'
 import { useHistory } from 'react-router-dom'
-import { Space, Table, Tag } from 'antd'
+import { Space, Table } from 'antd'
 import { Link } from 'react-router-dom'
 
 import { Button, Popconfirm } from 'antd'
 const Dashboard = () => {
-  const [karyawan, setKaryawan] = useState([])
+  const [Book, setBook] = useState([])
   const [name, setName] = useState('')
-  // eslint-disable-next-line no-unused-vars
-  const [token, setToken] = useState('')
-  const [expire, setExpire] = useState('')
+  const [WriterData, setWriterData] = useState([])
+  const [StoreData, setStoreData] = useState([])
+  const [paymemt, setPayment] = useState([])
+  const [staff, setStaff] = useState([])
+
   const history = useHistory()
 
   useEffect(() => {
-    refreshToken()
-    getKaryawan()
+    Auth()
+    Writer()
+    getStaff()
+    getPayment()
   }, [])
-  // const handleDeleteUser = useCallback(
-  //     (userId) => async () => {
-  //       await deleteUser(userId)
-  //       notification.success({
-  //         message: t('delete_success'),
-  //       })
-  //     },
-  //     [deleteUser, t]
-  //   )
-  const getKaryawan = async () => {
-    await axios
-      .get('http://localhost:5000/karyawan')
-      .then((res) => setKaryawan(res.data))
+
+  const Auth = async () => {
+    const data = JSON.parse(localStorage.getItem('data'))
+    try {
+      await axios
+        .post('http://localhost:5000/api/login', {
+          data: JSON.stringify({
+            username: data.username,
+            password: data.password,
+          }),
+        })
+        .then((res) => {
+          if(res.data === "User not found"){
+            history.push('/login')
+          } else {
+            setName(res.data.username)
+          }
+        })
+      history.push('/dashboard')
+    } catch (error) {
+      history.push('/login')
+      if (error.response) {
+        console.log(error.response.data.msg)
+      }
+    }
   }
-  console.log(karyawan)
+
+  const Writer = async () => {
+    await axios
+      .get('http://localhost:5000/api/writer')
+      .then((res) => setWriterData(res.data))
+      .finally(() => Store())
+  }
+
+  const Store = async () => {
+    await axios
+      .get('http://localhost:5000/api/store')
+      .then((res) => setStoreData(res.data))
+      .finally(() => getBook())
+  }
+
+  const getBook = async () => {
+    await axios
+      .get('http://localhost:5000/api/book')
+      .then((res) => setBook(res.data))
+  }
+
+  const getPayment = async () => {
+    await axios
+      .get('http://localhost:5000/api/payment')
+      .then((res) => setPayment(res.data))
+  }
+
+  const getStaff = async () => {
+    await axios
+      .get('http://localhost:5000/api/staff')
+      .then((res) => setStaff(res.data))
+  }
+
+  const handleDeleteUser = (id) => async () => {
+    await axios.delete(`http://localhost:5000/api/book/${id}`)
+    Auth()
+    Writer()
+  }
+
+  const BookData = useMemo(
+    () =>
+      Book.map((data) => {
+        let writerName = WriterData.find((x) => x.WriterID === data.WriterID)
+        let storeName = StoreData.find((x) => x.storeID === data.StoreID)
+        return {
+          bookID: data?.bookID ?? '',
+          title: data?.title ?? '',
+          Writer: writerName?.WriterName ?? '',
+          price: data?.price ?? '',
+          Store: storeName?.StoreName ?? '',
+          ReleaseDate: data?.ReleaseDate ?? '',
+          Description: data?.Description ?? '',
+          Publisher: data?.Publisher ?? '',
+        }
+      }),
+    [Book]
+  )
+
+  const StaffData = useMemo(
+    () =>
+      staff.map((data) => {
+        let storeName = StoreData.find((x) => x.storeID === data.StoreID)
+        return {
+          staffId: data?.StaffID ?? '',
+          name: data?.StaffName ?? '',
+          email: data?.StaffEmail ?? '',
+          phone: data?.StaffPhone ?? '',
+          store: storeName?.StoreName ?? '',
+        }
+      }),
+    [staff]
+  )
+
+  const PaymentData = useMemo(
+    () =>
+      paymemt.map((data) => {
+        return {
+          date: data?.date ?? '',
+          total: data?.total ?? '',
+          paymentMethod: data?.paymentMethod ?? '',
+          status: data?.status ?? '',
+        }
+      }),
+    [paymemt]
+  )
+
+  console.log(staff)
+  console.log(paymemt)
+  
+
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'nama',
-      key: 'nama',
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
     },
     {
-      title: 'Age',
-      dataIndex: 'age',
-      key: 'age',
+      title: 'Writer',
+      dataIndex: 'Writer',
+      key: 'Writer',
     },
     {
-      title: 'Phone Number',
-      dataIndex: 'no_telp',
-      key: 'no_telp',
+      title: 'Price',
+      dataIndex: 'price',
+      key: 'price',
+      render: (price) => <p>Rp{price}</p>,
     },
     {
-      title: 'Address',
-      dataIndex: 'alamat',
-      key: 'alamat',
+      title: 'Store',
+      dataIndex: 'Store',
+      key: 'Store',
     },
     {
-      title: 'Tags',
-      key: 'tags',
-      dataIndex: 'tags',
-      render: (_, { tags }) => {
-        const temp = tags.split(',')
-        return (
-          <>
-            {temp.map((tag) => {
-              let color = tag.length > 7 ? 'geekblue' : 'green'
-              if (tag === 'database') {
-                color = 'volcano'
-              }
-              return (
-                <Tag color={color} key={tag}>
-                  {tag.toUpperCase()}
-                </Tag>
-              )
-            })}
-          </>
-        )
-      },
+      title: 'Release Date',
+      dataIndex: 'ReleaseDate',
+      key: 'ReleaseDate',
     },
     {
-      dataIndex: 'id',
+      title: 'Description',
+      dataIndex: 'Description',
+      key: 'Description',
+    },
+    {
+      title: 'Publisher',
+      dataIndex: 'Publisher',
+      key: 'Publisher',
+    },
+    {
+      dataIndex: 'bookID',
       width: 70,
       render: (userId) => (
         <Space>
-          <Link to={`/karyawan/${userId}`}>
+          <Link to={`/Update/${userId}`}>
             <Button icon={<EditOutlined />} />
           </Link>
 
           <Popconfirm
             title={'Delete Confirm'}
-            // onConfirm={handleDeleteUser(userId)}
+            onConfirm={handleDeleteUser(userId)}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
@@ -99,54 +196,112 @@ const Dashboard = () => {
     },
   ]
 
-  const refreshToken = async () => {
-    try {
-      const response = await axios.get('http://localhost:5000/token')
-      setToken(response.data.accessToken)
-      const decoded = jwt_decode(response.data.accessToken)
-      setName(decoded.name)
-      setExpire(decoded.exp)
-    } catch (error) {
-      if (error.response) {
-        history.push('/')
-      }
-    }
-  }
-
-  const axiosJWT = axios.create()
-
-  axiosJWT.interceptors.request.use(
-    async (config) => {
-      const currentDate = new Date()
-      if (expire * 1000 < currentDate.getTime()) {
-        const response = await axios.get('http://localhost:5000/token')
-        config.headers.Authorization = `Bearer ${response.data.accessToken}`
-        setToken(response.data.accessToken)
-        const decoded = jwt_decode(response.data.accessToken)
-        setName(decoded.name)
-        setExpire(decoded.exp)
-      }
-      return config
+  const coloumsStaff = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
     },
-    (error) => {
-      return Promise.reject(error)
-    }
-  )
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      render: (email) => <p>{email}</p>,
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: 'Store',
+      dataIndex: 'store',
+      key: 'store',
+    },
+    {
+      dataIndex: 'StaffID',
+      width: 70,
+      render: (userId) => (
+        <Space>
+          <Link to={`/Update/${userId}`}>
+            <Button icon={<EditOutlined />} />
+          </Link>
+
+          <Popconfirm
+            title={'Delete Confirm'}
+            onConfirm={handleDeleteUser(userId)}
+          >
+            <Button danger icon={<DeleteOutlined />} />
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ]
+
+  const coloumsPayment = [
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+    },
+    {
+      title: 'Total',
+      dataIndex: 'total',
+      key: 'total',
+      render: (total) => <p>Rp{total}</p>,
+    },
+    {
+      title: 'Book',
+      dataIndex: 'book',
+      key: 'book',
+    },
+    {
+      title: 'Store',
+      dataIndex: 'store',
+      key: 'store',
+    },
+  ]
+
+
 
   const Create = () => {
-    history.push('/karyawan')
+    history.push('/Book')
   }
 
   return (
     <div className="container mt-5">
-      <h1>Welcome Back: {name}</h1>
-      <button onClick={null} className="button is-info">
-        Get Users
-      </button>
-      <Table columns={columns} dataSource={karyawan} />
-      <Button onClick={Create} type="primary">
-        Create karyawan
-      </Button>
+      <div className="flex flex-col">
+        <div>
+          <h1>Welcome Back: {name}</h1>
+          <button
+            onClick={() => {
+              Auth()
+              Writer()
+            }}
+            className="button is-info"
+          >
+            Get Book
+          </button>
+          <Table columns={columns} dataSource={BookData} />
+          <Button onClick={Create} type="primary">
+            Create Book
+          </Button>
+        </div>
+        <div className="flex flex-row w-full">
+          <div className="w-1/2">
+            <Table columns={coloumsStaff} dataSource={StaffData} />
+            <Button onClick={()=> history.push("/Staff")} type="primary">
+              Add Staff
+            </Button>
+          </div>
+          <div className="w-1/2">
+            <Table columns={coloumsPayment} dataSource={PaymentData} />
+            <Button onClick={()=> history.push("/Payment")} type="primary">
+              Add Payment
+            </Button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

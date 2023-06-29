@@ -3,14 +3,23 @@ import Dashboard from './components/Dashboard'
 import Login from './components/Login'
 import Navbar from './components/Navbar'
 import Register from './components/Register'
+import { Book } from './components/Buku'
+import { Store } from './components/Store'
 import { Update } from './components/Update'
-import { Karyawan } from './components/Karyawan'
+import { Staff } from './components/Staff'
+import { Payment } from './components/Payment'
 
 function App() {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/">
+          <Login />
+        </Route>
+        <Route exact path="/login">
+          <Login />
+        </Route>
+        <Route exact path="/tugas-basdat">
           <Login />
         </Route>
         <Route path="/register">
@@ -20,13 +29,25 @@ function App() {
           <Navbar />
           <Dashboard />
         </Route>
-        <Route path="/karyawan/:id">
+        <Route path="/book">
+          <Navbar />
+          <Book />
+        </Route>
+        <Route path="/store">
+          <Navbar />
+          <Store />
+        </Route>
+        <Route path="/Update/:id">
           <Navbar />
           <Update />
         </Route>
-        <Route path="/karyawan">
+        <Route path="/Staff">
           <Navbar />
-          <Karyawan />
+          <Staff />
+        </Route>
+        <Route path="/Payment">
+          <Navbar />
+          <Payment />
         </Route>
       </Switch>
     </BrowserRouter>

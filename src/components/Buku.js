@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react'
 import { Button, Select, Form, Input } from 'antd'
 import axios from 'axios'
-import { useParams } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
-export function Update() {
-  let { id } = useParams()
+export function Book() {
   const formRef = React.useRef(null)
   const history = useHistory()
   const [WriterData, setWriterData] = React.useState([])
   const [StoreData, setStoreData] = React.useState([])
   const [writerName, setWriterName] = React.useState('')
   const onFinish = (values) => {
-    axios.put(`http://localhost:5000/api/book`, {
-      bookID: Number(id),
+    axios.post(`http://localhost:5000/api/book`, {
       title: values.title,
       WriterID: values.WriterID,
       price: values.price,
@@ -23,21 +20,6 @@ export function Update() {
     })
     history.push('/dashboard')
   }
-  useEffect(() => {
-    axios.get(`http://localhost:5000/api/book/${id}`).then((values) => {
-      values = values.data
-      formRef.current?.setFieldsValue({
-        title: values.title,
-        WriterID: values.WriterID,
-        price: values.price,
-        StoreID: values.StoreID,
-        ReleaseDate: values.ReleaseDate,
-        Description: values.Description,
-        Publisher: values.Publisher,
-      })
-    })
-  })
-  console.log(id)
 
   const Writer = () => {
     axios.get(`http://localhost:5000/api/writer`).then((res) => {

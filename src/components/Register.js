@@ -4,22 +4,21 @@ import { useHistory } from 'react-router-dom'
 
 const Register = () => {
   const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confPassword, setConfPassword] = useState('')
+  const [confPassword, setConfPassword] = useState(true)
   const [msg, setMsg] = useState('')
   const history = useHistory()
 
   const Register = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:5000/users', {
-        name: name,
-        email: email,
-        password: password,
-        confPassword: confPassword,
+      await axios.post('http://localhost:5000/api/register', {
+        data: JSON.stringify({
+          username: name,
+          password: password,
+        }),
       })
-      history.push('/')
+      history.push('/tugas-basdat')
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.msg)
@@ -48,18 +47,6 @@ const Register = () => {
                   </div>
                 </div>
                 <div className="field mt-5">
-                  <label className="label">Email</label>
-                  <div className="controls">
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="field mt-5">
                   <label className="label">Password</label>
                   <div className="controls">
                     <input
@@ -78,11 +65,19 @@ const Register = () => {
                       type="password"
                       className="input"
                       placeholder="******"
-                      value={confPassword}
-                      onChange={(e) => setConfPassword(e.target.value)}
+                      onChange={(e) =>
+                        e.target.value === password
+                          ? setConfPassword(false)
+                          : setConfPassword(true)
+                      }
                     />
                   </div>
                 </div>
+                {confPassword ? (
+                  <p className="has-text-danger">Password not match</p>
+                ) : (
+                  ''
+                )}
                 <div className="field mt-5">
                   <button className="button is-success is-fullwidth">
                     Register
