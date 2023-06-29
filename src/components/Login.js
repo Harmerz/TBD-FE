@@ -20,7 +20,7 @@ const Login = () => {
   const Auth = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:5000/api/login', {
+      await axios.post('https://tbd-be.vercel.app/api/login', {
         data: JSON.stringify({
           username: email,
           password: password,

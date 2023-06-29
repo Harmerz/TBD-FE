@@ -12,7 +12,7 @@ const Register = () => {
   const Register = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:5000/api/register', {
+      await axios.post('https://tbd-be.vercel.app/api/register', {
         data: JSON.stringify({
           username: name,
           password: password,

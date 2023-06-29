@@ -28,7 +28,7 @@ const Dashboard = () => {
     const data = JSON.parse(localStorage.getItem('data'))
     try {
       await axios
-        .post('http://localhost:5000/api/login', {
+        .post('https://tbd-be.vercel.app/api/login', {
           data: JSON.stringify({
             username: data.username,
             password: data.password,
@@ -52,38 +52,38 @@ const Dashboard = () => {
 
   const Writer = async () => {
     await axios
-      .get('http://localhost:5000/api/writer')
+      .get('https://tbd-be.vercel.app/api/writer')
       .then((res) => setWriterData(res.data))
       .finally(() => Store())
   }
 
   const Store = async () => {
     await axios
-      .get('http://localhost:5000/api/store')
+      .get('https://tbd-be.vercel.app/api/store')
       .then((res) => setStoreData(res.data))
       .finally(() => getBook())
   }
 
   const getBook = async () => {
     await axios
-      .get('http://localhost:5000/api/book')
+      .get('https://tbd-be.vercel.app/api/book')
       .then((res) => setBook(res.data))
   }
 
   const getPayment = async () => {
     await axios
-      .get('http://localhost:5000/api/payment')
+      .get('https://tbd-be.vercel.app/api/payment')
       .then((res) => setPayment(res.data))
   }
 
   const getStaff = async () => {
     await axios
-      .get('http://localhost:5000/api/staff')
+      .get('https://tbd-be.vercel.app/api/staff')
       .then((res) => setStaff(res.data))
   }
 
   const handleDeleteUser = (id) => async () => {
-    await axios.delete(`http://localhost:5000/api/book/${id}`)
+    await axios.delete(`https://tbd-be.vercel.app/api/book/${id}`)
     Auth()
     Writer()
   }

@@ -7,13 +7,13 @@ export function Store() {
   const history = useHistory()
   const onFinish = async (values) => {
     try {
-      const res = await axios.post(`http://localhost:5000/api/address`, {
+      const res = await axios.post(`https://tbd-be.vercel.app/api/address`, {
         address: values.address,
         address2: values.address2,
         City: values.city,
         PostalZip: values.postalzip,
       })
-      await axios.post(`http://localhost:5000/api/store`, {
+      await axios.post(`https://tbd-be.vercel.app/api/store`, {
         StoreName: values.storename,
         addressID: res.data.addressID,
       })

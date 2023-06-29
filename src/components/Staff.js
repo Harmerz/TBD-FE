@@ -8,7 +8,7 @@ export function Staff() {
   const [StoreData, setStoreData] = React.useState([])
   const [UserData, setUserData] = React.useState([])
   const onFinish = (values) => {
-    axios.post(`http://localhost:5000/api/staff`, {
+    axios.post(`https://tbd-be.vercel.app/api/staff`, {
         StaffName: values.StaffName,
         StaffEmail: values.StaffEmail,
         StaffPhone: values.StaffPhone,
@@ -19,14 +19,14 @@ export function Staff() {
   }
 
   const Writer = () => {
-    axios.get(`http://localhost:5000/api/store`).then((res) => {
+    axios.get(`https://tbd-be.vercel.app/api/store`).then((res) => {
       const data = res.data
       setStoreData(data)
     })
   }
 
   const Store = () => {
-    axios.get(`http://localhost:5000/api/user`).then((res) => {
+    axios.get(`https://tbd-be.vercel.app/api/user`).then((res) => {
       const data = res.data
       setUserData(data)
     })

@@ -8,7 +8,7 @@ const Navbar = () => {
   const Logout = async () => {
     localStorage.removeItem('data')
     try {
-      await axios.post('http://localhost:5000/api/login',
+      await axios.post('https://tbd-be.vercel.app/api/login',
         {
           data: JSON.stringify({
             username: '',

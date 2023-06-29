@@ -9,7 +9,7 @@ export function Book() {
   const [StoreData, setStoreData] = React.useState([])
   const [writerName, setWriterName] = React.useState('')
   const onFinish = (values) => {
-    axios.post(`http://localhost:5000/api/book`, {
+    axios.post(`https://tbd-be.vercel.app/api/book`, {
       title: values.title,
       WriterID: values.WriterID,
       price: values.price,
@@ -22,14 +22,14 @@ export function Book() {
   }
 
   const Writer = () => {
-    axios.get(`http://localhost:5000/api/writer`).then((res) => {
+    axios.get(`https://tbd-be.vercel.app/api/writer`).then((res) => {
       const data = res.data
       setWriterData(data)
     })
   }
 
   const Store = () => {
-    axios.get(`http://localhost:5000/api/store`).then((res) => {
+    axios.get(`https://tbd-be.vercel.app/api/store`).then((res) => {
       const data = res.data
       setStoreData(data)
     })
@@ -37,7 +37,7 @@ export function Book() {
 
   const AddWriter = async (values) => {
     try {
-      await axios.post(`http://localhost:5000/api/writer`, {
+      await axios.post(`https://tbd-be.vercel.app/api/writer`, {
         WriterName: values,
       })
       Writer()

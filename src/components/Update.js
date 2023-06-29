@@ -11,7 +11,7 @@ export function Update() {
   const [StoreData, setStoreData] = React.useState([])
   const [writerName, setWriterName] = React.useState('')
   const onFinish = (values) => {
-    axios.put(`http://localhost:5000/api/book`, {
+    axios.put(`https://tbd-be.vercel.app/api/book`, {
       bookID: Number(id),
       title: values.title,
       WriterID: values.WriterID,
@@ -24,7 +24,7 @@ export function Update() {
     history.push('/dashboard')
   }
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/book/${id}`).then((values) => {
+    axios.get(`https://tbd-be.vercel.app/api/book/${id}`).then((values) => {
       values = values.data
       formRef.current?.setFieldsValue({
         title: values.title,
@@ -40,14 +40,14 @@ export function Update() {
   console.log(id)
 
   const Writer = () => {
-    axios.get(`http://localhost:5000/api/writer`).then((res) => {
+    axios.get(`https://tbd-be.vercel.app/api/writer`).then((res) => {
       const data = res.data
       setWriterData(data)
     })
   }
 
   const Store = () => {
-    axios.get(`http://localhost:5000/api/store`).then((res) => {
+    axios.get(`https://tbd-be.vercel.app/api/store`).then((res) => {
       const data = res.data
       setStoreData(data)
     })
@@ -55,7 +55,7 @@ export function Update() {
 
   const AddWriter = async (values) => {
     try {
-      await axios.post(`http://localhost:5000/api/writer`, {
+      await axios.post(`https://tbd-be.vercel.app/api/writer`, {
         WriterName: values,
       })
       Writer()
