@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
+import { notification } from 'antd'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -8,14 +9,37 @@ const Login = () => {
   const [msg, setMsg] = useState('')
   const history = useHistory()
 
+  const openNotification = () => {
+  notification.open({
+    message: 'Error',
+    description: 'Wrong Username or Password',
+  });
+
+};
+
   const Auth = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:5000/login', {
-        email: email,
-        password: password,
+      await axios.post('http://localhost:5000/api/login', {
+        data: JSON.stringify({
+          username: email,
+          password: password,
+        }),
+      }).then((res) => {
+        if (res.data === "User not found") {
+          openNotification()
+        } else {
+          localStorage.setItem(
+            'data',
+            JSON.stringify({
+              username: email,
+              password: password,
+            })
+          )
+        history.push('/dashboard')
+
+        }
       })
-      history.push('/dashboard')
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.msg)
